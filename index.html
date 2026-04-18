@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Northstar School Admin Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <aside class="sidebar">
+      <div class="brand-lockup">
+        <div class="brand-mark">NS</div>
+        <div>
+          <p class="eyebrow">School Operations</p>
+          <h1>Northstar</h1>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav" aria-label="Primary">
+        <a class="nav-item active" href="#dashboard">Dashboard</a>
+        <a class="nav-item" href="#students">Students</a>
+        <a class="nav-item" href="#classes">Classes</a>
+        <a class="nav-item" href="#attendance">Attendance</a>
+        <a class="nav-item" href="#fees">Fees</a>
+        <a class="nav-item" href="#admins">Administration</a>
+        <a class="nav-item" href="#reports">Reports</a>
+      </nav>
+
+      <section class="sidebar-card">
+        <p class="eyebrow">Today</p>
+        <h2>Monday, April 18</h2>
+        <p>124 students checked in before 8:15 AM.</p>
+        <div class="mini-progress">
+          <span style="width: 84%"></span>
+        </div>
+        <small>Attendance rate: 84%</small>
+      </section>
+
+      <section class="sidebar-card accent">
+        <p class="eyebrow">System status</p>
+        <h2>All services online</h2>
+        <p>Records sync, notifications, and fee updates are running normally.</p>
+      </section>
+    </aside>
+
+    <main class="content">
+      <header class="topbar" id="dashboard">
+        <div>
+          <p class="eyebrow">School Admin Dashboard</p>
+          <h2>Manage students, staff, classes, and records in one place.</h2>
+        </div>
+        <div class="topbar-actions">
+          <button class="ghost-button" id="exportBtn">Export roster</button>
+          <button class="primary-button" id="openStudentModal">Add student</button>
+          <button class="ghost-button" id="openAdminModal">Add admin account</button>
+        </div>
+      </header>
+
+      <section class="hero-panel">
+        <div class="hero-copy">
+          <p class="eyebrow">Operational overview</p>
+          <h3>A complete control center for a modern school administration team.</h3>
+          <p>
+            Track enrollment, handle discipline notes, monitor attendance, and keep every academic record up to date without leaving the dashboard.
+          </p>
+          <div class="hero-tags">
+            <span>Student database</span>
+            <span>Teacher coordination</span>
+            <span>Fee status</span>
+            <span>Reports</span>
+          </div>
+        </div>
+        <div class="hero-stats">
+          <article>
+            <strong id="totalStudents">0</strong>
+            <span>Students</span>
+          </article>
+          <article>
+            <strong id="activeClasses">0</strong>
+            <span>Classes</span>
+          </article>
+          <article>
+            <strong id="attendanceRate">0%</strong>
+            <span>Attendance</span>
+          </article>
+          <article>
+            <strong id="pendingFees">0</strong>
+            <span>Pending fees</span>
+          </article>
+        </div>
+      </section>
+
+      <section class="kpi-grid" aria-label="Key performance indicators">
+        <article class="kpi-card">
+          <p>Enrollment trend</p>
+          <h3>+12% this term</h3>
+          <div class="sparkline">
+            <span style="height: 38%"></span>
+            <span style="height: 52%"></span>
+            <span style="height: 46%"></span>
+            <span style="height: 70%"></span>
+            <span style="height: 62%"></span>
+            <span style="height: 88%"></span>
+          </div>
+        </article>
+        <article class="kpi-card">
+          <p>Student alerts</p>
+          <h3 id="alertCount">0 flagged</h3>
+          <span class="muted">Behavior, attendance, and fee reminders</span>
+        </article>
+        <article class="kpi-card">
+          <p>Admin workload</p>
+          <h3>18 tasks</h3>
+          <span class="muted">4 pending approvals and 14 updates</span>
+        </article>
+      </section>
+
+      <section class="insight-grid">
+        <article class="feature-card feature-card-large">
+          <div class="panel-header compact">
+            <div>
+              <p class="eyebrow">Announcements</p>
+              <h3>What the school needs to know today</h3>
+            </div>
+          </div>
+          <div class="announcement-list" id="announcementList"></div>
+        </article>
+
+        <article class="feature-card">
+          <div class="panel-header compact">
+            <div>
+              <p class="eyebrow">Quick actions</p>
+              <h3>Shortcuts for admin work</h3>
+            </div>
+          </div>
+          <div class="quick-actions">
+            <button class="quick-action" type="button" id="openStudentModalQuick">New student</button>
+            <button class="quick-action" type="button" id="exportBtnQuick">Export CSV</button>
+            <button class="quick-action" type="button" id="resetFiltersBtn">Reset filters</button>
+            <button class="quick-action" type="button" id="highlightAbsentBtn">Show low attendance</button>
+          </div>
+        </article>
+
+        <article class="feature-card">
+          <div class="panel-header compact">
+            <div>
+              <p class="eyebrow">Today&apos;s schedule</p>
+              <h3>Key school moments</h3>
+            </div>
+          </div>
+          <div class="schedule-list" id="scheduleList"></div>
+        </article>
+      </section>
+
+      <section class="panel" id="students">
+        <div class="panel-header">
+          <div>
+            <p class="eyebrow">Student Database</p>
+            <h3>Search, filter, and manage records</h3>
+          </div>
+          <div class="filters">
+            <input id="searchInput" type="search" placeholder="Search by name, class, or guardian" />
+            <select id="classFilter" aria-label="Filter by class">
+              <option value="all">All classes</option>
+            </select>
+            <select id="statusFilter" aria-label="Filter by status">
+              <option value="all">All statuses</option>
+              <option value="Active">Active</option>
+              <option value="Probation">Probation</option>
+              <option value="Graduating">Graduating</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="table-shell">
+          <table>
+            <thead>
+              <tr>
+                <th>Student</th>
+                <th>Class</th>
+                <th>Guardian</th>
+                <th>Attendance</th>
+                <th>Status</th>
+                <th>Fee</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="studentTable"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="double-grid">
+        <section class="panel" id="classes">
+          <div class="panel-header compact">
+            <div>
+              <p class="eyebrow">Classes</p>
+              <h3>Academic groups</h3>
+            </div>
+          </div>
+          <div class="class-list" id="classList"></div>
+        </section>
+
+        <section class="panel" id="attendance">
+          <div class="panel-header compact">
+            <div>
+              <p class="eyebrow">Attendance</p>
+              <h3>Weekly summary</h3>
+            </div>
+          </div>
+          <div class="attendance-chart">
+            <div class="bar"><span style="height: 72%"></span><label>Mon</label></div>
+            <div class="bar"><span style="height: 81%"></span><label>Tue</label></div>
+            <div class="bar"><span style="height: 76%"></span><label>Wed</label></div>
+            <div class="bar"><span style="height: 89%"></span><label>Thu</label></div>
+            <div class="bar"><span style="height: 84%"></span><label>Fri</label></div>
+            <div class="bar"><span style="height: 67%"></span><label>Sat</label></div>
+          </div>
+        </section>
+      </section>
+
+      <section class="double-grid">
+        <section class="panel" id="fees">
+          <div class="panel-header compact">
+            <div>
+              <p class="eyebrow">Fee management</p>
+              <h3>Outstanding balances</h3>
+            </div>
+          </div>
+          <div class="fee-list" id="feeList"></div>
+        </section>
+
+        <section class="panel" id="admins">
+          <div class="panel-header compact">
+            <div>
+              <p class="eyebrow">Administration</p>
+              <h3>Staff actions and notices</h3>
+            </div>
+          </div>
+          <div class="admin-stack">
+            <article>
+              <strong>Principal's note</strong>
+              <p>Mid-term reports are due by Friday. Please review attendance exceptions before publishing.</p>
+            </article>
+            <article>
+              <strong>Office queue</strong>
+              <p>4 admission requests awaiting review, 2 document verifications, and 1 guardian callback.</p>
+            </article>
+            <article>
+              <strong>System reminders</strong>
+              <p>Backup completed at 06:00 and data sync completed successfully.</p>
+            </article>
+          </div>
+        </section>
+      </section>
+
+      <section class="panel" id="admin-accounts">
+        <div class="panel-header">
+          <div>
+            <p class="eyebrow">Admin Accounts</p>
+            <h3>Manage access, roles, and permissions</h3>
+          </div>
+          <div class="filters">
+            <input id="adminSearchInput" type="search" placeholder="Search admins by name or role" />
+            <select id="adminRoleFilter" aria-label="Filter by admin role">
+              <option value="all">All roles</option>
+            </select>
+            <button class="ghost-button" id="addAdminAccountBtn">New account</button>
+          </div>
+        </div>
+        <div class="admin-account-shell">
+          <div class="admin-account-summary">
+            <article>
+              <span>Total accounts</span>
+              <strong id="adminTotalCount">0</strong>
+            </article>
+            <article>
+              <span>Active accounts</span>
+              <strong id="adminActiveCount">0</strong>
+            </article>
+            <article>
+              <span>Roles in use</span>
+              <strong id="adminRoleCount">0</strong>
+            </article>
+          </div>
+          <div class="security-strip">
+            <article>
+              <span>Last backup</span>
+              <strong>06:00 AM</strong>
+            </article>
+            <article>
+              <span>2FA status</span>
+              <strong>Enabled</strong>
+            </article>
+            <article>
+              <span>Login attempts</span>
+              <strong>0 failed</strong>
+            </article>
+          </div>
+          <div class="table-shell admin-table-shell">
+            <table>
+              <thead>
+                <tr>
+                  <th>Admin</th>
+                  <th>Role</th>
+                  <th>Email</th>
+                  <th>Permissions</th>
+                  <th>Status</th>
+                  <th>Last Login</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="adminTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="double-grid">
+        <section class="panel" id="staff">
+          <div class="panel-header compact">
+            <div>
+              <p class="eyebrow">Staff</p>
+              <h3>Faculty snapshot</h3>
+            </div>
+          </div>
+          <div class="staff-grid" id="staffGrid"></div>
+        </section>
+
+        <section class="panel" id="insights">
+          <div class="panel-header compact">
+            <div>
+              <p class="eyebrow">Insights</p>
+              <h3>Overall school pulse</h3>
+            </div>
+          </div>
+          <div class="pulse-list">
+            <article>
+              <strong>Parent engagement</strong>
+              <p>86% of guardians responded to the latest term notice within 24 hours.</p>
+            </article>
+            <article>
+              <strong>Academic risk</strong>
+              <p>Five learners need attention for attendance, performance, or outstanding fees.</p>
+            </article>
+            <article>
+              <strong>Next milestone</strong>
+              <p>Mid-term assessments begin next Wednesday across all grades.</p>
+            </article>
+          </div>
+        </section>
+      </section>
+
+      <section class="panel" id="reports">
+        <div class="panel-header">
+          <div>
+            <p class="eyebrow">Reports</p>
+            <h3>Activity feed, audit trail, and recent updates</h3>
+          </div>
+          <button class="ghost-button" id="seedDemoData">Reset demo data</button>
+        </div>
+        <div class="reports-grid">
+          <div class="activity-grid" id="activityFeed"></div>
+          <div class="audit-panel">
+            <div class="panel-header compact">
+              <div>
+                <p class="eyebrow">Audit trail</p>
+                <h3>Recent changes</h3>
+              </div>
+            </div>
+            <div class="audit-list" id="auditList"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal-backdrop hidden" id="studentModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal">
+      <div class="modal-header">
+        <div>
+          <p class="eyebrow">Student record</p>
+          <h3 id="modalTitle">Add a new student</h3>
+        </div>
+        <button class="icon-button" id="closeModal" aria-label="Close dialog">×</button>
+      </div>
+      <form id="studentForm" class="form-grid">
+        <label>
+          Full name
+          <input name="name" type="text" placeholder="e.g. Maya Johnson" required />
+        </label>
+        <label>
+          Student ID
+          <input name="id" type="text" placeholder="e.g. NS-2048" required />
+        </label>
+        <label>
+          Class
+          <select name="className" id="classOptions" required></select>
+        </label>
+        <label>
+          Guardian
+          <input name="guardian" type="text" placeholder="Guardian name" required />
+        </label>
+        <label>
+          Attendance rate
+          <input name="attendance" type="number" min="0" max="100" value="95" required />
+        </label>
+        <label>
+          Fee status
+          <select name="feeStatus" required>
+            <option>Paid</option>
+            <option>Pending</option>
+            <option>Overdue</option>
+          </select>
+        </label>
+        <label>
+          Status
+          <select name="status" required>
+            <option>Active</option>
+            <option>Probation</option>
+            <option>Graduating</option>
+          </select>
+        </label>
+        <label class="full-width">
+          Notes
+          <textarea name="notes" rows="4" placeholder="Academic or administrative notes"></textarea>
+        </label>
+        <div class="form-actions full-width">
+          <button type="button" class="ghost-button" id="cancelStudent">Cancel</button>
+          <button type="submit" class="primary-button">Save student</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-backdrop hidden" id="detailModal" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+    <div class="modal detail-modal">
+      <div class="modal-header">
+        <div>
+          <p class="eyebrow">Student profile</p>
+          <h3 id="detailTitle">Student details</h3>
+        </div>
+        <button class="icon-button" id="closeDetailModal" aria-label="Close dialog">×</button>
+      </div>
+
+      <div class="detail-summary">
+        <div class="detail-avatar" id="detailAvatar">NS</div>
+        <div>
+          <h4 id="detailName">Student Name</h4>
+          <p id="detailMeta">Class and guardian</p>
+          <div class="detail-badges">
+            <span id="detailStatusBadge"></span>
+            <span id="detailFeeBadge"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="detail-grid">
+        <article>
+          <span>Student ID</span>
+          <strong id="detailId"></strong>
+        </article>
+        <article>
+          <span>Attendance</span>
+          <strong id="detailAttendance"></strong>
+        </article>
+        <article>
+          <span>Guardian</span>
+          <strong id="detailGuardian"></strong>
+        </article>
+        <article>
+          <span>Class</span>
+          <strong id="detailClass"></strong>
+        </article>
+      </div>
+
+      <section class="detail-notes">
+        <p class="eyebrow">Notes</p>
+        <p id="detailNotes"></p>
+      </section>
+
+      <div class="detail-actions">
+        <button class="ghost-button" id="markFeePaidBtn">Mark fee paid</button>
+        <button class="ghost-button" id="increaseAttendanceBtn">Increase attendance</button>
+        <button class="primary-button" id="editFromDetailBtn">Edit student</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop hidden" id="adminModal" role="dialog" aria-modal="true" aria-labelledby="adminModalTitle">
+    <div class="modal">
+      <div class="modal-header">
+        <div>
+          <p class="eyebrow">Admin account</p>
+          <h3 id="adminModalTitle">Add admin account</h3>
+        </div>
+        <button class="icon-button" id="closeAdminModal" aria-label="Close dialog">×</button>
+      </div>
+      <form id="adminForm" class="form-grid">
+        <label>
+          Full name
+          <input name="fullName" type="text" placeholder="e.g. Sarah Khan" required />
+        </label>
+        <label>
+          Username
+          <input name="username" type="text" placeholder="e.g. skhan" required />
+        </label>
+        <label>
+          Email
+          <input name="email" type="email" placeholder="admin@school.edu" required />
+        </label>
+        <label>
+          Role
+          <select name="role" id="adminRoleSelect" required></select>
+        </label>
+        <label>
+          Status
+          <select name="status" required>
+            <option>Active</option>
+            <option>Suspended</option>
+            <option>Pending</option>
+          </select>
+        </label>
+        <label>
+          Last login
+          <input name="lastLogin" type="text" placeholder="Today, 08:14 AM" required />
+        </label>
+        <label class="full-width">
+          Permissions
+          <textarea name="permissions" rows="3" placeholder="Student records, attendance, fees"></textarea>
+        </label>
+        <div class="form-actions full-width">
+          <button type="button" class="ghost-button" id="cancelAdmin">Cancel</button>
+          <button type="submit" class="primary-button">Save admin</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <template id="studentRowTemplate">
+    <tr>
+      <td>
+        <div class="student-cell">
+
+  <template id="adminRowTemplate">
+    <tr>
+      <td>
+        <div class="student-cell">
+          <div class="avatar admin-avatar"></div>
+          <div>
+            <strong class="admin-name"></strong>
+            <span class="admin-username"></span>
+          </div>
+        </div>
+      </td>
+      <td class="admin-role"></td>
+      <td class="admin-email"></td>
+      <td class="admin-permissions"></td>
+      <td class="admin-status"></td>
+      <td class="admin-login"></td>
+      <td>
+        <div class="row-actions">
+          <button class="text-button edit-admin-button">Edit</button>
+          <button class="text-button danger-button remove-admin-button">Remove</button>
+        </div>
+      </td>
+    </tr>
+  </template>
+          <div class="avatar"></div>
+          <div>
+            <strong class="student-name"></strong>
+            <span class="student-id"></span>
+          </div>
+        </div>
+      </td>
+      <td class="student-class"></td>
+      <td class="student-guardian"></td>
+      <td>
+        <div class="attendance-pill"><span></span><strong class="attendance-value"></strong></div>
+      </td>
+      <td class="student-status"></td>
+      <td class="student-fee"></td>
+      <td>
+        <div class="row-actions">
+          <button class="text-button edit-button">Edit</button>
+          <button class="text-button danger-button remove-button">Remove</button>
+        </div>
+      </td>
+    </tr>
+  </template>
+          <button class="text-button view-button">View</button>
+
+  <script src="app.js"></script>
+</body>
+</html>
